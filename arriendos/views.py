@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
@@ -22,15 +24,20 @@ def verificar_cliente(request):
 
 def unidades_disponibles(herramienta, inicio, termino):
     ocupadas = Arriendo.objects.filter(
-        herramienta=herramienta,         estado__in=[
+        herramienta=herramienta,
+        estado__in=[
             Arriendo.Estado.SOLICITADO,
             Arriendo.Estado.APROBADO,
             Arriendo.Estado.ENTREGADO,
         ],
-        inicio__lt=termino, termino__gt=inicio,
+        inicio__lt=termino,
+        termino__gt=inicio,
+        unidad__isnull=False,
     ).values('unidad_id')
+
     return herramienta.unidades.filter(
-        estado=UnidadFisica.Estado.DISPONIBLE, ubicacion__activa=True,
+        estado=UnidadFisica.Estado.DISPONIBLE,
+        ubicacion__activa=True,
     ).exclude(pk__in=ocupadas).exclude(UnidadFisica.criterio_mantenimiento(termino))
 
 
@@ -38,20 +45,48 @@ def unidades_disponibles(herramienta, inicio, termino):
 @require_http_methods(['GET', 'POST'])
 def agregar(request, pk):
     verificar_cliente(request)
-    herramienta = get_object_or_404(Herramienta, pk=pk, activa=True, categoria__activa=True)
+    herramienta = get_object_or_404(herramienta_activa(), pk=pk)
     form = FechasForm(request.POST if request.method == 'POST' else None)
+
     if request.method == 'POST' and form.is_valid():
         if Arriendo.atrasados().filter(cliente=request.user).exists():
             form.add_error(None, MENSAJE_ATRASO)
-        elif unidades_disponibles(herramienta, **form.cleaned_data).exists():
-            Arriendo.objects.create(
-                cliente=request.user, herramienta=herramienta,
-                tarifa_diaria=herramienta.tarifa_diaria, **form.cleaned_data,
-            )
-            return redirect('arriendos:carrito')
         else:
-            form.add_error(None, 'No hay unidades disponibles para esas fechas.')
+            inicio = form.cleaned_data['inicio']
+            termino = form.cleaned_data['termino']
+            cantidad = form.cleaned_data['cantidad']
+
+            with transaction.atomic():
+                Usuario.objects.select_for_update().get(pk=request.user.pk)
+                en_carrito = Arriendo.objects.filter(
+                    cliente=request.user,
+                    herramienta=herramienta,
+                    estado=Arriendo.Estado.CARRITO,
+                    inicio__lt=termino,
+                    termino__gt=inicio,
+                ).count()
+                disponibles = unidades_disponibles(herramienta, inicio, termino).count()
+
+                if en_carrito + cantidad <= disponibles:
+                    Arriendo.objects.bulk_create([
+                        Arriendo(
+                            cliente=request.user,
+                            herramienta=herramienta,
+                            tarifa_diaria=herramienta.tarifa_diaria,
+                            inicio=inicio,
+                            termino=termino,
+                        )
+                        for _ in range(cantidad)
+                    ])
+                    return redirect('arriendos:carrito')
+
+            form.add_error('cantidad', 'No hay suficientes unidades para esas fechas.')
+
     return render(request, 'arriendos/agregar.html', {'form': form, 'herramienta': herramienta})
+
+
+def herramienta_activa():
+    return Herramienta.objects.filter(activa=True, categoria__activa=True)
 
 
 def render_carrito(request, error=None):
@@ -84,25 +119,35 @@ def solicitar(request):
     verificar_cliente(request)
     try:
         with transaction.atomic():
+            Usuario.objects.select_for_update().get(pk=request.user.pk)
             if Arriendo.atrasados().filter(cliente=request.user).exists():
                 raise ValidationError(MENSAJE_ATRASO)
+
             carrito = Arriendo.objects.filter(cliente=request.user, estado=Arriendo.Estado.CARRITO)
             ids = set(carrito.values_list('herramienta_id', flat=True))
             herramientas = Herramienta.objects.select_for_update(of=('self',)).select_related('categoria')
-            modelos = herramientas.filter(pk__in=ids).order_by('pk').in_bulk()
+            modelos = {
+                herramienta.pk: herramienta
+                for herramienta in herramientas.filter(pk__in=ids).order_by('pk')
+            }
             items = carrito.select_for_update().filter(herramienta_id__in=ids).order_by('pk')
+            solicitud_id = uuid4()
+
             for item in items:
                 herramienta = modelos[item.herramienta_id]
                 if item.inicio < timezone.localdate():
                     raise ValidationError('Quita del carrito las solicitudes con fechas vencidas.')
                 if not herramienta.activa or not herramienta.categoria.activa:
                     raise ValidationError(f'{herramienta.nombre} ya no está en el catálogo.')
+
                 unidad = unidades_disponibles(herramienta, item.inicio, item.termino).order_by('pk').first()
                 if unidad is None:
                     raise ValidationError(f'Ya no hay unidades de {herramienta.nombre} para esas fechas.')
+
                 item.unidad = unidad
                 item.estado = Arriendo.Estado.SOLICITADO
-                item.save(update_fields=['unidad', 'estado'])
+                item.solicitud_id = solicitud_id
+                item.save(update_fields=['unidad', 'estado', 'solicitud_id'])
     except ValidationError as error:
         return render_carrito(request, error.message)
     return redirect('arriendos:carrito')
@@ -122,13 +167,13 @@ def solicitudes(request):
 @require_http_methods(['GET', 'POST'])
 def registrar_movimiento(request, pk):
     if request.user.rol not in {Usuario.Rol.ADMINISTRADOR, Usuario.Rol.TRABAJADOR}:
-        raise PermissionDenied 
+        raise PermissionDenied
     referencia = get_object_or_404(Arriendo, pk=pk)
     with transaction.atomic():
         Herramienta.objects.select_for_update().get(pk=referencia.herramienta_id)
         arriendo = get_object_or_404(
             Arriendo.objects.select_for_update().filter(
-                   estado__in=[Arriendo.Estado.APROBADO, Arriendo.Estado.ENTREGADO],
+                estado__in=[Arriendo.Estado.APROBADO, Arriendo.Estado.ENTREGADO],
                 unidad__isnull=False,
             ),
             pk=pk,
@@ -168,7 +213,7 @@ def registrar_movimiento(request, pk):
                     arriendo=arriendo, operador=request.user,
                     tipo=Movimiento.Tipo.ENTREGA if entrega else Movimiento.Tipo.DEVOLUCION,
                     firma=form.cleaned_data['firma'], observaciones=form.cleaned_data['observaciones'],
-                        firma_dibujada=form.cleaned_data['firma_dibujada'],
+                    firma_dibujada=form.cleaned_data['firma_dibujada'],
                     estado_anterior=unidad.estado, estado_nuevo=nuevo_estado,
                     cargo_dano=unidad.valor_reposicion if dano else 0,
                     reembolso=0 if entrega else reembolso,
@@ -182,6 +227,8 @@ def registrar_movimiento(request, pk):
         return render(request, 'arriendos/movimiento.html', {
             'arriendo': arriendo, 'form': form, 'entrega': entrega,
         })
+
+
 @login_required
 @require_POST
 def cambiar_estado_solicitud(request, pk, accion):
@@ -207,13 +254,23 @@ def cambiar_estado_solicitud(request, pk, accion):
     referencia = get_object_or_404(solicitudes_del_usuario, pk=pk)
 
     with transaction.atomic():
-        Herramienta.objects.select_for_update().get(pk=referencia.herramienta_id)
-        arriendo = get_object_or_404(
-            solicitudes_del_usuario.select_for_update(),
-            pk=pk,
+        if referencia.solicitud_id:
+            grupo = solicitudes_del_usuario.filter(
+                cliente_id=referencia.cliente_id,
+                solicitud_id=referencia.solicitud_id,
+            )
+        else:
+            grupo = solicitudes_del_usuario.filter(pk=pk)
+
+        herramientas = list(grupo.values_list('herramienta_id', flat=True))
+        list(
+            Herramienta.objects.select_for_update()
+            .filter(pk__in=herramientas)
+            .order_by('pk')
         )
-        if arriendo.estado in estados_permitidos:
-            arriendo.estado = nuevo_estado
-            arriendo.save(update_fields=['estado'])
+        items = list(grupo.select_for_update().order_by('pk'))
+
+        if items and all(item.estado in estados_permitidos for item in items):
+            grupo.update(estado=nuevo_estado)
 
     return redirect(destino)

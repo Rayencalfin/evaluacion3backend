@@ -7,6 +7,7 @@ from io import BytesIO
 from PIL import Image, ImageChops, UnidentifiedImageError
 
 class FechasForm(forms.Form):
+    cantidad = forms.IntegerField(label='Cantidad', min_value=1, initial=1)
     inicio = forms.DateField(label='Fecha de retiro', widget=forms.DateInput(attrs={'type': 'date'}, format='%Y-%m-%d'))
     termino = forms.DateField(label='Fecha de devolución', widget=forms.DateInput(attrs={'type': 'date'}, format='%Y-%m-%d'))
 

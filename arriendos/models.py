@@ -18,6 +18,7 @@ class Arriendo(models.Model):
     cliente = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
     herramienta = models.ForeignKey('inventario.Herramienta', on_delete=models.PROTECT)
     unidad = models.ForeignKey('inventario.UnidadFisica', on_delete=models.PROTECT, null=True)
+    solicitud_id = models.UUIDField(null=True, editable=False, db_index=True)
     inicio = models.DateField()
     termino = models.DateField()
     tarifa_diaria = models.DecimalField(max_digits=12, decimal_places=0)
