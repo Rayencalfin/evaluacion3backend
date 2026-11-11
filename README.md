@@ -55,5 +55,7 @@ Las consultas y el apoyo recibido durante el desarrollo se registran en [prompts
 
 ## Despliegue
 
-- **Ejecución local:** http://127.0.0.1:8000/
-- **Dirección pública de AWS EC2:** pendiente de despliegue.
+- **Ejecución local:** [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+- **Dirección pública de AWS EC2:** [http://100.31.232.248/](http://100.31.232.248/) (IP elástica).
+- **Instancia:** `Rentis-EC2`, región `us-east-1` (Norte de Virginia).
+- **Arquitectura:** Django y PostgreSQL 16 en la misma instancia EC2, con Gunicorn y Nginx.
