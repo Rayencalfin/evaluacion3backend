@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Mi carrito</h1>
+{% if bloqueado and not error %}<ul class="errorlist" role="alert"><li>Tienes una devolución atrasada. Regularízala para solicitar otro arriendo.</li></ul>{% endif %}
+{% if error %}<ul class="errorlist" role="alert"><li>{{ error }}</li></ul>{% endif %}
+<ul class="inventario-lista">
+{% for item in carrito %}
+{% if item.estado == 'SOLICITADO' or item.estado == 'APROBADO' %}
+    <form method="post" action="{% url 'arriendos:cambiar_estado' item.pk 'cancelar' %}">
+        {% csrf_token %}
+        <button type="submit">Cancelar solicitud</button>
+    </form>
+{% endif %}
+<li>
+    <span>{{ item.herramienta.nombre }} · {{ item.inicio }} al {{ item.termino }} · ${{ item.total }} CLP</span>
+    <form method="post" action="{% url 'arriendos:quitar' item.pk %}">
+        {% csrf_token %}
+        <button type="submit">Quitar</button>
+    </form>
+</li>
+{% empty %}
+<li>Tu carrito está vacío.</li>
+{% endfor %}
+</ul>
+{% if carrito and not bloqueado %}
+<form method="post" action="{% url 'arriendos:solicitar' %}">
+    {% csrf_token %}
+    <button class="boton">Enviar solicitud de arriendo</button>
+</form>
+{% endif %}
+<h2>Mis solicitudes</h2>
+<ul class="inventario-lista">
+{% for item in solicitudes %}
+<li>{{ item.herramienta.nombre }} · {{ item.inicio }} al {{ item.termino }} · ${{ item.total }} CLP · {{ item.get_estado_display }}{% if item.atrasado %} · Devolución atrasada{% endif %}{% with devolucion=item.devolucion %}{% if devolucion.cargo_dano %} · Cargo por daño ${{ devolucion.cargo_dano }} CLP{% endif %}{% if devolucion.reembolso %} · Reembolso calculado ${{ devolucion.reembolso }} CLP{% endif %}{% endwith %}</li>
+{% empty %}
+<li>Todavía no hay solicitudes.</li>
+{% endfor %}
+</ul>
+{% endblock %}

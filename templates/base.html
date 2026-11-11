@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}Rentis{% endblock %}</title>
+    
+<link rel="stylesheet" href="{% static 'css/estilos.css' %}?v=4">
+</head>
+<body>
+   <header class="encabezado">
+    <div class="contenedor">
+        <a class="marca" href="{% url 'core:inicio' %}">RENTIS</a>
+
+        <nav class="navegacion" aria-label="Navegación principal">
+            <a href="{% url 'core:inicio' %}">Inicio</a>
+            <a href="{% url 'inventario:catalogo' %}">Catálogo</a>
+
+            {% if request.user.is_authenticated %}
+                {% if request.user.rol == 'CLIENTE' %}
+                    <a href="{% url 'arriendos:carrito' %}">Mi carrito</a>
+                {% endif %}
+                <a href="{% url 'usuarios:panel' %}">Mi panel</a>
+
+                <form method="post" action="{% url 'usuarios:logout' %}">
+                    {% csrf_token %}
+                    <button class="boton-salir" type="submit">
+                        Cerrar sesión
+                    </button>
+                </form>
+            {% else %}
+                <a href="{% url 'usuarios:login' %}">Iniciar sesión</a>
+            {% endif %}
+        </nav>
+    </div>
+</header>
+
+    <main class="contenedor contenido">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer class="pie">
+        <div class="contenedor">
+            Rayen Alejandra Calfin Melivilu · Sección AP_N4_C1 · Año 2026
+        </div>
+    </footer>
+</body>
+</html>

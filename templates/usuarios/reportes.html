@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Reportes</h1>
+<p>Devoluciones atrasadas: <strong>{{ atrasos }}</strong></p>
+{% for titulo, filas in resumen %}
+<h2>{{ titulo }}</h2>
+<ul class="inventario-lista">
+    {% for estado, cantidad in filas %}
+    <li>{{ estado }} <strong>{{ cantidad }}</strong></li>
+    {% empty %}
+    <li>Todavía no hay registros.</li>
+    {% endfor %}
+</ul>
+{% endfor %}
+{% endblock %}

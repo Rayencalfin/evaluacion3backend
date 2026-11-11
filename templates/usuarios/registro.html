@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Crear cuenta | Rentis{% endblock %}
+
+{% block content %}
+<section class="formulario-acceso">
+    <h1>Crear cuenta</h1>
+    <p>Regístrate como cliente para solicitar arriendos.</p>
+
+    <form method="post" action="{% url 'usuarios:registro' %}">
+        {% csrf_token %}
+
+        {{ form.non_field_errors }}
+
+        {% for campo in form %}
+            <div class="campo">
+                <label for="{{ campo.id_for_label }}">
+                    {{ campo.label }}
+                </label>
+
+                {{ campo }}
+
+                {% if campo.help_text %}
+                    <div class="ayuda-campo">
+                        {{ campo.help_text }}
+                    </div>
+                {% endif %}
+
+                {{ campo.errors }}
+            </div>
+        {% endfor %}
+
+        <button class="boton" type="submit">Crear cuenta</button>
+    </form>
+
+    <p>
+        ¿Ya tienes cuenta?
+        <a href="{% url 'usuarios:login' %}">Iniciar sesión</a>
+    </p>
+</section>
+{% endblock %}

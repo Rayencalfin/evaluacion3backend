@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Gestionar usuarios</h1>
+{% if form %}
+<section class="formulario-acceso">
+    <h2>Editar {{ cuenta.username }}</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="boton">Guardar</button>
+        <a href="{% url 'usuarios:gestion' %}">Cancelar</a>
+    </form>
+</section>
+{% endif %}
+<ul class="inventario-lista">
+{% for usuario in cuentas %}
+    <li>
+        <span>{{ usuario.username }} · {{ usuario.get_rol_display }} · {% if usuario.is_active %}Activa{% else %}Inactiva{% endif %}</span>
+        {% if usuario.pk != request.user.pk and not usuario.is_superuser %}
+        <a href="{% url 'usuarios:editar_cuenta' usuario.pk %}">Editar</a>
+        {% endif %}
+    </li>
+{% endfor %}
+</ul>
+{% endblock %}

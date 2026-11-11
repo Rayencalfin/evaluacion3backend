@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block title %}{{ titulo }} | Rentis{% endblock %}
+{% block content %}
+<h1>Inventario</h1>
+<nav class="inventario-nav" aria-label="Secciones del inventario">
+    {% for clave, nombre in secciones %}
+        <a href="{% url 'inventario:gestionar' clave %}" {% if clave == seccion %}aria-current="page"{% endif %}>{{ nombre }}</a>
+    {% endfor %}
+</nav>
+<div class="inventario-grid">
+    <section>
+        <h2>{{ titulo }}</h2>
+        {% if seccion == 'unidades' %}
+    <form method="get"
+          action="{% url 'inventario:gestionar' 'unidades' %}"
+          class="inventario-nav"
+          role="search">
+        <label for="buscar-unidad">Buscar por nombre o código</label>
+        <input type="search"
+               id="buscar-unidad"
+               name="q"
+               value="{{ busqueda_unidades }}"
+               placeholder="Ej. martillo MA-65"
+               maxlength="150">
+        <button type="submit">Buscar</button>
+        {% if busqueda_unidades %}
+            <a href="{% url 'inventario:gestionar' 'unidades' %}">Limpiar</a>
+        {% endif %}
+    </form>
+{% endif %}
+        <ul class="inventario-lista">
+            {% for registro in registros %}
+            <li>
+                <div>
+                    <strong>{{ registro }}</strong>
+                    {% if seccion == 'unidades' %}
+                        <div>{{ registro.get_estado_display }} · {{ registro.ubicacion }}</div>
+                        {% if registro.mantenimiento_pendiente %}<strong>Mantenimiento preventivo pendiente</strong>{% endif %}
+                    {% else %}
+                        {% if registro.activa %}<div>Activo</div>{% else %}<div>Inactivo</div>{% endif %}
+                    {% endif %}
+                </div>
+                <a href="{% url 'inventario:editar' seccion registro.pk %}" aria-label="Editar {{ registro }}">Editar</a>
+            </li>
+            {% empty %}
+{% if busqueda_unidades %}
+    <li>No se encontraron unidades para «{{ busqueda_unidades }}».</li>
+{% else %}
+    <li>Todavía no hay registros.</li>
+{% endif %}
+            {% endfor %}
+        </ul>
+        {% if pagina_unidades and pagina_unidades.has_other_pages %}
+    <nav class="inventario-nav" aria-label="Páginas de unidades físicas">
+        {% if pagina_unidades.has_previous %}
+            <a href="?q={{ busqueda_unidades|urlencode }}&amp;pagina={{ pagina_unidades.previous_page_number }}">
+                Anterior
+            </a>
+        {% endif %}
+
+        <span>Página {{ pagina_unidades.number }} de {{ pagina_unidades.paginator.num_pages }}</span>
+
+        {% if pagina_unidades.has_next %}
+            <a href="?q={{ busqueda_unidades|urlencode }}&amp;pagina={{ pagina_unidades.next_page_number }}">
+                Siguiente
+            </a>
+        {% endif %}
+    </nav>
+{% endif %}
+    </section>
+    <section class="formulario-acceso">
+        <h2>{% if objeto %}Editar registro{% else %}Nuevo registro{% endif %}</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button class="boton" type="submit">Guardar</button>
+            {% if objeto %}<a href="{% url 'inventario:gestionar' seccion %}">Cancelar</a>{% endif %}
+        </form>
+    </section>
+</div>
+{% if objeto and seccion == 'unidades' %}
+<h2>Historial de cambios manuales</h2>
+<ul class="inventario-lista">
+    {% for cambio in historial %}
+    <li>{{ cambio.fecha }} · {{ cambio.operador.username }}<br>
+        {{ cambio.estado_anterior }} → {{ cambio.estado_nuevo }}<br>
+        {{ cambio.ubicacion_anterior }} → {{ cambio.ubicacion_nueva }}</li>
+    {% empty %}
+    <li>Todavía no hay cambios manuales registrados.</li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% endblock %}

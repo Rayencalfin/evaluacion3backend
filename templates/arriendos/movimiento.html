@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="formulario-acceso">
+    <h1>{% if entrega %}Registrar entrega{% else %}Registrar devolución{% endif %}</h1>
+    <p>{{ arriendo.herramienta }} · {{ arriendo.unidad.codigo }}</p>
+    <p>Cliente {{ arriendo.cliente.username }} · {{ arriendo.inicio }} al {{ arriendo.termino }}</p>
+    <form method="post">
+        {% csrf_token %}
+{{ form.non_field_errors }}
+
+{% for campo in form.visible_fields %}
+    <p>
+        {{ campo.label_tag }}
+        {{ campo }}
+        {{ campo.errors }}
+    </p>
+{% endfor %}
+
+<div style="margin-block: 1rem;">
+    <p id="firma-instruccion">
+        <strong>Firma del responsable</strong><br>
+        Dibuja tu firma con el mouse o con el dedo.
+    </p>
+
+    {{ form.firma_dibujada }}
+    {{ form.firma_dibujada.errors }}
+
+    <canvas id="lienzo-firma" width="600" height="220"
+            aria-describedby="firma-instruccion"
+            style="display: block; width: 100%; max-width: 600px; height: auto;
+                   border: 2px solid #9cafc3; border-radius: 10px;
+                   background: #fff; touch-action: none;">
+    </canvas>
+
+    <button type="button" id="limpiar-firma" style="margin-top: .75rem;">
+        Limpiar firma
+    </button>
+</div>
+
+<script>
+    (() => {
+        const lienzo = document.querySelector('#lienzo-firma');
+        const campo = document.querySelector('#id_firma_dibujada');
+        const contexto = lienzo.getContext('2d');
+        let puntero = null;
+
+        contexto.strokeStyle = '#153552';
+        contexto.lineWidth = 3;
+        contexto.lineCap = 'round';
+        contexto.lineJoin = 'round';
+
+        function posicion(evento) {
+            const rect = lienzo.getBoundingClientRect();
+            return [
+                (evento.clientX - rect.left - lienzo.clientLeft) *
+                    lienzo.width / lienzo.clientWidth,
+                (evento.clientY - rect.top - lienzo.clientTop) *
+                    lienzo.height / lienzo.clientHeight,
+            ];
+        }
+
+        lienzo.addEventListener('pointerdown', (evento) => {
+            if (puntero !== null || evento.button !== 0) return;
+            puntero = evento.pointerId;
+            lienzo.setPointerCapture(puntero);
+            contexto.beginPath();
+            contexto.moveTo(...posicion(evento));
+        });
+
+        lienzo.addEventListener('pointermove', (evento) => {
+            if (evento.pointerId !== puntero) return;
+            contexto.lineTo(...posicion(evento));
+            contexto.stroke();
+            campo.value = lienzo.toDataURL('image/png');
+        });
+
+        function terminarTrazo(evento) {
+            if (evento.pointerId === puntero) puntero = null;
+        }
+
+        lienzo.addEventListener('pointerup', terminarTrazo);
+        lienzo.addEventListener('pointercancel', terminarTrazo);
+        lienzo.addEventListener('lostpointercapture', terminarTrazo);
+
+        document.querySelector('#limpiar-firma').addEventListener('click', () => {
+            contexto.clearRect(0, 0, lienzo.width, lienzo.height);
+            campo.value = '';
+        });
+
+        // Si el formulario vuelve con errores, pide que se firme de nuevo.
+        campo.value = '';
+    })();
+</script>
+        <button class="boton" type="submit">Confirmar registro</button>
+    </form>
+    <a href="{% url 'arriendos:solicitudes' %}">Volver a solicitudes</a>
+</section>
+{% endblock %}

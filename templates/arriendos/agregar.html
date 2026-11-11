@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="formulario-acceso">
+    <h1>Arrendar {{ herramienta.nombre }}</h1>
+    <p>Tarifa diaria de ${{ herramienta.tarifa_diaria }} CLP.</p>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="boton">Agregar al carrito</button>
+    </form>
+</section>
+{% endblock %}

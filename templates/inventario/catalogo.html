@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Catálogo | Rentis{% endblock %}
+{% block content %}
+<h1>Catálogo de herramientas</h1>
+<form method="get" class="inventario-nav">
+    <label>Buscar <input type="search" name="q" value="{{ busqueda }}" placeholder="Nombre, marca o modelo"></label>
+    <label>Categoría
+        <select name="categoria">
+            <option value="">Todas</option>
+            {% for categoria in categorias %}
+            <option value="{{ categoria.pk }}" {% if categoria.pk|stringformat:"s" == categoria_seleccionada %}selected{% endif %}>{{ categoria.nombre }}</option>
+            {% endfor %}
+        </select>
+    </label>
+    <button class="boton" type="submit">Filtrar</button>
+</form>
+<div class="catalogo-grid">
+    {% for herramienta in herramientas %}
+    <article class="catalogo-ficha">
+        {% if herramienta.imagen_url %}
+        <img src="{{ herramienta.imagen_url }}" alt="" loading="lazy">
+        {% endif %}
+        <h2>{{ herramienta.nombre }}</h2>
+        <p>{{ herramienta.marca }} {{ herramienta.modelo }}</p>
+        <p>{{ herramienta.descripcion }}</p>
+        <p><strong>${{ herramienta.tarifa_diaria }} CLP</strong> por día</p>
+        <p>Unidades disponibles ahora: {{ herramienta.unidades_disponibles }}</p>
+        {% if not request.user.is_authenticated or request.user.rol == 'CLIENTE' %}
+        <a class="boton" href="{% url 'arriendos:agregar' herramienta.pk %}">Elegir fechas</a>
+        {% endif %}
+    </article>
+    {% empty %}
+    <p>No hay herramientas que coincidan con la búsqueda.</p>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ titulo_panel }} | Rentis{% endblock %}
+
+{% block content %}
+<section class="rentis-dashboard">
+    <header class="panel-cabecera">
+        <h1>{{ titulo_panel }}</h1>
+        <p>Hola, {{ request.user.get_full_name|default:request.user.username }}.</p>
+    </header>
+
+    {% if request.user.rol == 'ADMINISTRADOR' %}
+        <dl class="panel-cifras">
+            <div><dt>Unidades físicas</dt><dd>{{ total_unidades }}</dd></div>
+            <div><dt>Solicitudes pendientes</dt><dd>{{ solicitudes_pendientes }}</dd></div>
+            <div><dt>Devoluciones atrasadas</dt><dd>{{ atrasos }}</dd></div>
+        </dl>
+    {% endif %}
+
+    <nav class="panel-accesos" aria-label="Opciones del panel">
+        {% if request.user.rol == 'ADMINISTRADOR' %}
+            <a href="{% url 'inventario:inicio' %}">
+                <strong>Gestionar inventario</strong>
+                <span>Herramientas, ubicaciones y unidades</span>
+            </a>
+            <a href="{% url 'usuarios:gestion' %}">
+                <strong>Gestionar usuarios</strong>
+                <span>Cuentas, roles y accesos</span>
+            </a>
+            <a href="{% url 'usuarios:reportes' %}">
+                <strong>Reportes</strong>
+                <span>Inventario, arriendos y atrasos</span>
+            </a>
+        {% endif %}
+
+        {% if request.user.rol == 'ADMINISTRADOR' or request.user.rol == 'TRABAJADOR' %}
+            <a href="{% url 'arriendos:solicitudes' %}">
+                <strong>Ver solicitudes</strong>
+                <span>Arriendos, entregas y devoluciones</span>
+            </a>
+        {% else %}
+            <a href="{% url 'inventario:catalogo' %}">
+                <strong>Ver catálogo</strong>
+                <span>Consulta herramientas y elige fechas</span>
+            </a>
+            <a href="{% url 'arriendos:carrito' %}">
+                <strong>Mi carrito</strong>
+                <span>Revisa tus selecciones y solicitudes</span>
+            </a>
+        {% endif %}
+    </nav>
+
+    {% if request.user.rol == 'ADMINISTRADOR' %}
+        <section class="panel-grafico">
+            <h2>Unidades por estado</h2>
+            {% if total_unidades %}
+                <ul>
+                    {% for estado, cantidad in estados %}
+                        <li>
+                            <span id="estado-{{ forloop.counter }}">{{ estado }}</span>
+                            <meter min="0"
+                                   max="{{ total_unidades|stringformat:'d' }}"
+                                   value="{{ cantidad|stringformat:'d' }}"
+                                   aria-labelledby="estado-{{ forloop.counter }}"></meter>
+                            <strong>{{ cantidad }}</strong>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>Registra una unidad física para ver su distribución por estado.</p>
+            {% endif %}
+        </section>
+    {% endif %}
+</section>
+{% endblock %}

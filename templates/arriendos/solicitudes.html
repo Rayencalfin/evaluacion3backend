@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Solicitudes de arriendo</h1>
+
+<ul class="inventario-lista">
+    {% for item in solicitudes %}
+        <li>
+            <div>
+                <strong>{{ item.herramienta.nombre }}</strong> · {{ item.unidad.codigo }}<br>
+                {{ item.cliente.username }} · {{ item.inicio }} al {{ item.termino }}
+            </div>
+
+            <div>
+                <p>
+                    {{ item.get_estado_display }}
+                    {% if item.atrasado %}
+                        · <strong>Devolución atrasada</strong>
+                    {% endif %}
+                    · ${{ item.total }} CLP
+                </p>
+
+                {% if item.estado == 'SOLICITADO' %}
+                    <form method="post" action="{% url 'arriendos:cambiar_estado' item.pk 'aprobar' %}">
+                        {% csrf_token %}
+                        <button type="submit">Aprobar solicitud</button>
+                    </form>
+
+                    <form method="post" action="{% url 'arriendos:cambiar_estado' item.pk 'rechazar' %}">
+                        {% csrf_token %}
+                        <button type="submit">Rechazar solicitud</button>
+                    </form>
+                {% elif item.estado == 'APROBADO' %}
+                    <a class="boton" href="{% url 'arriendos:movimiento' item.pk %}">
+                        Registrar entrega
+                    </a>
+                {% elif item.estado == 'ENTREGADO' %}
+                    <a class="boton" href="{% url 'arriendos:movimiento' item.pk %}">
+                        Registrar devolución
+                    </a>
+                {% endif %}
+
+                {% for movimiento in item.movimientos.all %}
+                    <div>
+                        <p>
+                            {{ movimiento.get_tipo_display }} · {{ movimiento.registrado_en }}<br>
+                            Responsable {{ movimiento.firma }} · Operador {{ movimiento.operador.username }}<br>
+                            {{ movimiento.estado_anterior }} → {{ movimiento.estado_nuevo }}
+
+                            {% if movimiento.cargo_dano %}
+                                <br>Cargo por daño ${{ movimiento.cargo_dano }} CLP
+                            {% endif %}
+                            {% if movimiento.reembolso %}
+                                <br>Reembolso calculado ${{ movimiento.reembolso }} CLP
+                            {% endif %}
+                            {% if movimiento.observaciones %}
+                                <br>{{ movimiento.observaciones }}
+                            {% endif %}
+                        </p>
+
+                        {% with firma=movimiento.firma_png_base64 %}
+                            {% if firma %}
+                                <img src="data:image/png;base64,{{ firma }}"
+                                     alt="Firma registrada del responsable"
+                                     style="display: block; width: 100%; max-width: 280px;
+                                            border: 1px solid #dce5ef; border-radius: 8px;">
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+                {% endfor %}
+            </div>
+        </li>
+    {% empty %}
+        <li>Todavía no hay solicitudes.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Iniciar sesión | Rentis{% endblock %}
+
+{% block content %}
+<section class="formulario-acceso">
+    <h1>Iniciar sesión</h1>
+    <p>Ingresa con tu nombre de usuario y contraseña.</p>
+
+    <form method="post" action="{% url 'usuarios:login' %}">
+        {% csrf_token %}
+
+        {{ form.non_field_errors }}
+
+        <div class="campo">
+            <label for="{{ form.username.id_for_label }}">
+                Nombre de usuario
+            </label>
+            {{ form.username }}
+            {{ form.username.errors }}
+        </div>
+
+        <div class="campo">
+            <label for="{{ form.password.id_for_label }}">
+                Contraseña
+            </label>
+            {{ form.password }}
+            {{ form.password.errors }}
+        </div>
+
+        {% if next %}
+            <input type="hidden" name="next" value="{{ next }}">
+        {% endif %}
+
+        <button class="boton" type="submit">Ingresar</button>
+    </form>
+
+    <p>
+        ¿No tienes cuenta?
+        <a href="{% url 'usuarios:registro' %}">Crear cuenta</a>
+    </p>
+</section>
+{% endblock %}
