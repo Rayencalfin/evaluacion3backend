@@ -39,8 +39,7 @@
         </nav>
     </div>
 </header>
-
-<main class="contenedor contenido{% if request.user.rol == 'ADMINISTRADOR' %}{% if request.resolver_match.namespace == 'inventario' and request.resolver_match.url_name != 'catalogo' or request.resolver_match.namespace == 'usuarios' or request.resolver_match.namespace == 'arriendos' and request.resolver_match.url_name != 'carrito' %} buildcorp-admin-area{% endif %}{% endif %}">
+<main class="contenedor contenido{% if request.user.rol == 'ADMINISTRADOR' %}{% if request.resolver_match.namespace == 'usuarios' or request.resolver_match.namespace == 'inventario' and request.resolver_match.url_name != 'catalogo' or request.resolver_match.namespace == 'arriendos' and request.resolver_match.url_name != 'carrito' %} buildcorp-admin-area{% endif %}{% endif %}">
         {% block content %}
         {% endblock %}
     </main>
