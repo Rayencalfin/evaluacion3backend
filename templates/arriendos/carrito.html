@@ -29,6 +29,7 @@
 </form>
 {% endif %}
 <h2>Mis solicitudes</h2>
+<h2 id="mis-solicitudes">Mis solicitudes</h2>
 <ul class="inventario-lista">
 {% for item in solicitudes %}
 <li>{{ item.herramienta.nombre }} · {{ item.inicio }} al {{ item.termino }} · ${{ item.total }} CLP · {{ item.get_estado_display }}{% if item.atrasado %} · Devolución atrasada{% endif %}{% with devolucion=item.devolucion %}{% if devolucion.cargo_dano %} · Cargo por daño ${{ devolucion.cargo_dano }} CLP{% endif %}{% if devolucion.reembolso %} · Reembolso calculado ${{ devolucion.reembolso }} CLP{% endif %}{% endwith %}</li>

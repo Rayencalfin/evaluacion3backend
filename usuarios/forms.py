@@ -47,3 +47,14 @@ class GestionUsuarioForm(forms.ModelForm):
         model = Usuario
         fields = ['rol', 'is_active']
         labels = {'is_active': 'Cuenta activa'}
+
+class DatosClienteForm(forms.ModelForm):
+    email = forms.EmailField(label='Correo electrónico')
+
+    class Meta:
+        model = Usuario
+        fields = ['first_name', 'last_name', 'email']
+        labels = {
+            'first_name': 'Nombre',
+            'last_name': 'Apellidos',
+        }

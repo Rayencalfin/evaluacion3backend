@@ -7,6 +7,8 @@ from django.views.decorators.http import require_http_methods
 from arriendos.models import Arriendo
 from inventario.models import UnidadFisica
 from .forms import GestionUsuarioForm, RegistroClienteForm
+from django.contrib import messages
+from .forms import DatosClienteForm, GestionUsuarioForm, RegistroClienteForm
 
 from .models import Usuario
 
@@ -24,7 +26,17 @@ def panel(request):
         raise PermissionDenied('Tu cuenta no tiene un rol válido.')
 
     contexto = {'titulo_panel': titulo}
+    if request.user.rol == Usuario.Rol.CLIENTE:
+        formulario = DatosClienteForm(
+            request.POST if request.method == 'POST' else None,
+            instance=request.user,
+        )
+        if request.method == 'POST' and formulario.is_valid():
+            formulario.save()
+            messages.success(request, 'Tus datos se actualizaron correctamente.')
+            return redirect('usuarios:panel')
 
+        contexto['formulario_datos'] = formulario
     if request.user.rol == Usuario.Rol.ADMINISTRADOR:
         conteos = {
             fila['estado']: fila['cantidad']
@@ -86,7 +98,7 @@ def gestion_usuarios(request, pk=None):
 
 @login_required
 def reportes(request):
-    if request.user.rol != Usuario.Rol.ADMINISTRADOR:
+    if request.user.rol not in {Usuario.Rol.ADMINISTRADOR, Usuario.Rol.TRABAJADOR}:
         raise PermissionDenied
     unidades = UnidadFisica.objects.values('estado').annotate(cantidad=Count('pk'))
     arriendos = Arriendo.objects.exclude(estado=Arriendo.Estado.CARRITO).values('estado').annotate(cantidad=Count('pk'))

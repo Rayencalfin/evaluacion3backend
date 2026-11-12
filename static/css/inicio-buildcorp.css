@@ -1,0 +1,114 @@
+.buildcorp-inicio .buildcorp-portada {
+    display: grid;
+    align-items: end;
+    min-height: clamp(25rem, 55vw, 40rem);
+    padding: clamp(1.5rem, 6vw, 5rem);
+    border-radius: 1.5rem;
+    color: #fff;
+    background: #102a43
+        linear-gradient(100deg, #081d32f5 5%, #081d32a8 55%, #081d3240);
+    background-image:
+        linear-gradient(100deg, #081d32f5 5%, #081d32a8 55%, #081d3240),
+        url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRU94ku8zPTp1XE8Yf03b1rgT0iD5gqKo3G3AykM_LETQ&s=10");
+    background-position: center;
+    background-size: cover;
+}
+
+.buildcorp-inicio .buildcorp-portada h1 {
+    max-width: 16ch;
+    margin: 0 0 1rem;
+    color: #fff;
+    font-size: clamp(2.4rem, 6vw, 5rem);
+    font-weight: 800;
+    line-height: 1.02;
+    letter-spacing: -.04em;
+}
+
+.buildcorp-inicio .buildcorp-portada h1 span {
+    color: #ffc857;
+}
+
+.buildcorp-inicio .buildcorp-portada p {
+    max-width: 44ch;
+    margin: 0;
+    font-size: clamp(1rem, 2vw, 1.25rem);
+}
+
+.buildcorp-inicio .card {
+    overflow: hidden;
+    border: 1px solid #dce6ef;
+    border-radius: 1.25rem;
+    box-shadow: 0 .5rem 1.5rem #102a4314;
+}
+
+.buildcorp-inicio .card-body {
+    padding: 1.5rem;
+    border-top: .25rem solid #ffc857;
+}
+
+.buildcorp-inicio .buildcorp-foto {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    height: auto;
+    object-fit: contain;
+    background: #e8eff6;
+}
+
+.buildcorp-inicio .buildcorp-foto-taller {
+    object-fit: cover;
+}
+
+.buildcorp-inicio .buildcorp-preguntas {
+    scroll-margin-top: 6rem;
+}
+
+.buildcorp-inicio .buildcorp-preguntas details {
+    margin-bottom: .75rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid #dce6ef;
+    border-radius: .75rem;
+    background: #fff;
+}
+
+.buildcorp-inicio .buildcorp-preguntas summary {
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.buildcorp-inicio .buildcorp-preguntas p {
+    margin: .75rem 0 0;
+}
+
+.buildcorp-inicio .buildcorp-catalogo {
+    display: grid;
+    justify-items: center;
+    gap: 1.5rem;
+    padding: clamp(3rem, 8vw, 6rem) 1.25rem;
+    margin-bottom: 4.5rem;
+    border-radius: 1.5rem;
+    background: linear-gradient(125deg, #102a43, #075985);
+    color: #fff;
+    text-align: center;
+}
+
+.buildcorp-inicio .buildcorp-catalogo h2 {
+    max-width: 24ch;
+    margin: 0;
+    color: #fff;
+    font-size: clamp(1.8rem, 4vw, 3.25rem);
+    line-height: 1.12;
+}
+
+.buildcorp-inicio .buildcorp-ayuda {
+    position: fixed;
+    right: 1.25rem;
+    bottom: 1.25rem;
+    z-index: 10;
+    padding: .75rem 1.25rem;
+    border-radius: 999px;
+    background: #102a43;
+    border-color: #102a43;
+    color: #fff;
+    font-weight: 700;
+    box-shadow: 0 .5rem 1.5rem #102a4340;
+}

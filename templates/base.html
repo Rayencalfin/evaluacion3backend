@@ -5,14 +5,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>{% block title %}Rentis{% endblock %}</title>
-    
-<link rel="stylesheet" href="{% static 'css/estilos.css' %}?v=4">
+    <title>{% block title %}BuildCorp{% endblock %}</title>
+{% block estilos_extra %}{% endblock %}
+<link rel="stylesheet" href="{% static 'css/inicio-buildcorp.css' %}?v=1">
+<link rel="stylesheet" href="{% static 'css/estilos.css' %}?v=6">
 </head>
 <body>
    <header class="encabezado">
     <div class="contenedor">
-        <a class="marca" href="{% url 'core:inicio' %}">RENTIS</a>
+<a class="marca marca-buildcorp" href="{% url 'core:inicio' %}">
+<img src="{% static 'img/logo-buildcorp-final.jpg' %}" alt="BuildCorp — Inicio">
+</a>
 
         <nav class="navegacion" aria-label="Navegación principal">
             <a href="{% url 'core:inicio' %}">Inicio</a>
@@ -37,7 +40,7 @@
     </div>
 </header>
 
-    <main class="contenedor contenido">
+<main class="contenedor contenido{% if request.user.rol == 'ADMINISTRADOR' %}{% if request.resolver_match.namespace == 'inventario' and request.resolver_match.url_name != 'catalogo' or request.resolver_match.namespace == 'usuarios' or request.resolver_match.namespace == 'arriendos' and request.resolver_match.url_name != 'carrito' %} buildcorp-admin-area{% endif %}{% endif %}">
         {% block content %}
         {% endblock %}
     </main>

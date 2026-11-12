@@ -1,46 +1,94 @@
 {% extends 'base.html' %}
 
-{% block title %}Inicio | Rentis{% endblock %}
+{% block title %}Inicio | BuildCorp{% endblock %}
+
+{% block estilos_extra %}
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous">
+{% endblock %}
 
 {% block content %}
-<section class="presentacion">
-    <p class="etiqueta">HERRAMIENTAS PARA TU OBRA</p>
+<div class="buildcorp-inicio">
+    <section class="buildcorp-portada">
+        <div class="buildcorp-portada-texto">
+            <h1>Maquinaria y herramientas <span>para tu obra</span></h1>
+            <p>Arrienda equipos para tu proyecto. Revisa las tarifas y elige tus fechas en el catálogo.</p>
+        </div>
+    </section>
 
-    <h1>Gestiona cada herramienta, desde la entrega hasta su devolución.</h1>
+    <section class="my-5" aria-labelledby="equipos-obra">
+        <h2 id="equipos-obra" class="mb-4">Equipos para cada etapa de tu obra</h2>
 
-    <p class="descripcion">
-        Rentis reúne el arriendo, el inventario y el mantenimiento
-        de herramientas y maquinaria ligera.
-    </p>
-</section>
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            <div class="col">
+                <article class="card h-100">
+                    <img class="card-img-top buildcorp-foto"
+                         src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSh1-PS2JRPkiA80b6e0SyVVWt5wDBC8hBscExl_AtRLg&amp;s=10"
+                         alt="Equipo de construcción recorriendo una obra"
+                         loading="lazy">
+                    <div class="card-body">
+                        <h3 class="h5 card-title">Maquinaria ligera</h3>
+                        <p class="card-text">Encuentra equipos para preparar el terreno y avanzar con tu obra.</p>
+                    </div>
+                </article>
+            </div>
 
-<section aria-labelledby="titulo-funciones">
-    <h2 id="titulo-funciones">Control durante todo el arriendo</h2>
+            <div class="col">
+                <article class="card h-100">
+                    <img class="card-img-top buildcorp-foto buildcorp-foto-taller"
+                         src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPz3zLkUVe2wxNCGoCWwu6DuRK5xv_yFUfI9M9Gb_uCw&amp;s=10"
+                         alt="Trabajador usando una herramienta en un taller"
+                         loading="lazy">
+                    <div class="card-body">
+                        <h3 class="h5 card-title">Herramientas</h3>
+                        <p class="card-text">Consulta herramientas manuales y eléctricas para tus trabajos.</p>
+                    </div>
+                </article>
+            </div>
 
-    <div class="funciones">
-        <article>
-            <h3>Inventario identificado</h3>
-            <p>
-                Cada unidad tendrá un código único para consultar
-                su ubicación, estado e historial.
-            </p>
-        </article>
+            <div class="col">
+                <article class="card h-100">
+                    <img class="card-img-top buildcorp-foto"
+                         src="https://www.shutterstock.com/image-photo/building-teamwork-partnership-gesture-people-260nw-296917583.jpg"
+                         alt="Dos trabajadores estrechando sus manos con guantes de trabajo"
+                         loading="lazy">
+                    <div class="card-body">
+                        <h3 class="h5 card-title">Arriendo por fechas</h3>
+                        <p class="card-text">Reúne las máquinas y herramientas que necesitas en una sola solicitud.</p>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
 
-        <article>
-            <h3>Entregas y devoluciones</h3>
-            <p>
-                Registro de responsables, condiciones y fechas
-                de cada operación.
-            </p>
-        </article>
+    <section id="ayuda-buildcorp" class="buildcorp-preguntas my-5"
+             aria-labelledby="titulo-ayuda-buildcorp">
+        <h2 id="titulo-ayuda-buildcorp" class="mb-4">Preguntas frecuentes</h2>
 
-        <article>
-            <h3>Mantenimiento y alertas</h3>
-            <p>
-                Seguimiento de revisiones preventivas
-                y herramientas pendientes de devolución.
-            </p>
-        </article>
-    </div>
-</section>
+        <details>
+            <summary>¿Cómo arriendo un equipo?</summary>
+            <p>Abre el <a href="{% url 'inventario:catalogo' %}">catálogo</a>, elige un equipo y sus fechas. Agrégalo al carrito y envía la solicitud.</p>
+        </details>
+
+        <details>
+            <summary>¿Cómo creo mi cuenta?</summary>
+            <p>Entra a <a href="{% url 'usuarios:login' %}">Iniciar sesión</a> y selecciona <strong>Crear cuenta</strong>.</p>
+        </details>
+
+        <details>
+            <summary>¿Dónde reviso mi solicitud?</summary>
+            <p>Inicia sesión como cliente y abre <strong>Mi carrito → Mis solicitudes</strong>.</p>
+        </details>
+    </section>
+
+    <section class="buildcorp-catalogo">
+        <h2>¿Qué equipo necesitas para tu próximo proyecto?</h2>
+        <a class="btn btn-warning btn-lg fw-bold"
+           href="{% url 'inventario:catalogo' %}">Ve nuestro catálogo</a>
+    </section>
+
+    <a class="btn btn-primary buildcorp-ayuda" href="#ayuda-buildcorp">Ayuda</a>
+</div>
 {% endblock %}

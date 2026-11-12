@@ -33,7 +33,7 @@ SECCIONES = {
 @login_required
 @require_http_methods(['GET', 'POST'])
 def gestionar(request, seccion='categorias', pk=None):
-    if request.user.rol != Usuario.Rol.ADMINISTRADOR:
+    if request.user.rol not in {Usuario.Rol.ADMINISTRADOR, Usuario.Rol.TRABAJADOR}:
         raise PermissionDenied
 
     if seccion not in SECCIONES:

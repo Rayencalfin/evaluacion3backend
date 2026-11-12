@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ titulo_panel }} | Rentis{% endblock %}
+{% block title %}{{ titulo_panel }} | BuildCorp{% endblock %}
 
 {% block content %}
-<section class="rentis-dashboard">
+<section class="rentis-dashboard{% if request.user.rol == 'ADMINISTRADOR' %} buildcorp-admin{% endif %}">
     <header class="panel-cabecera">
         <h1>{{ titulo_panel }}</h1>
         <p>Hola, {{ request.user.get_full_name|default:request.user.username }}.</p>
@@ -18,19 +18,23 @@
     {% endif %}
 
     <nav class="panel-accesos" aria-label="Opciones del panel">
-        {% if request.user.rol == 'ADMINISTRADOR' %}
-            <a href="{% url 'inventario:inicio' %}">
-                <strong>Gestionar inventario</strong>
-                <span>Herramientas, ubicaciones y unidades</span>
-            </a>
-            <a href="{% url 'usuarios:gestion' %}">
-                <strong>Gestionar usuarios</strong>
-                <span>Cuentas, roles y accesos</span>
-            </a>
-            <a href="{% url 'usuarios:reportes' %}">
-                <strong>Reportes</strong>
-                <span>Inventario, arriendos y atrasos</span>
-            </a>
+{% if request.user.rol == 'ADMINISTRADOR' or request.user.rol == 'TRABAJADOR' %}
+    <a href="{% url 'inventario:inicio' %}">
+        <strong>Gestionar inventario</strong>
+        <span>Maquinaria, herramientas, ubicaciones y unidades</span>
+    </a>
+
+    {% if request.user.rol == 'ADMINISTRADOR' %}
+        <a href="{% url 'usuarios:gestion' %}">
+            <strong>Gestionar usuarios</strong>
+            <span>Cuentas, roles y accesos</span>
+        </a>
+    {% endif %}
+
+    <a href="{% url 'usuarios:reportes' %}">
+        <strong>Reportes</strong>
+        <span>Inventario, arriendos y atrasos</span>
+    </a>
         {% endif %}
 
         {% if request.user.rol == 'ADMINISTRADOR' or request.user.rol == 'TRABAJADOR' %}
@@ -39,37 +43,98 @@
                 <span>Arriendos, entregas y devoluciones</span>
             </a>
         {% else %}
-            <a href="{% url 'inventario:catalogo' %}">
-                <strong>Ver catálogo</strong>
-                <span>Consulta herramientas y elige fechas</span>
-            </a>
-            <a href="{% url 'arriendos:carrito' %}">
-                <strong>Mi carrito</strong>
-                <span>Revisa tus selecciones y solicitudes</span>
-            </a>
+<div class="cuenta-cliente">
+    <div class="cuenta-cliente-accesos">
+        <a href="{% url 'inventario:catalogo' %}">
+            <strong>Ver catálogo</strong>
+            <span>Explora maquinaria y herramientas para tu obra.</span>
+        </a>
+
+        <a href="{% url 'arriendos:carrito' %}">
+            <strong>Mi carrito</strong>
+            <span>Revisa los equipos que elegiste antes de enviar tu solicitud.</span>
+        </a>
+
+        <a href="{% url 'arriendos:carrito' %}#mis-solicitudes">
+            <strong>Ver mis compras</strong>
+            <span>Consulta tus solicitudes de arriendo y sus estados.</span>
+        </a>
+    </div>
+
+    <img class="cuenta-cliente-imagen"
+         src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSoy2wGnf93nN70mTUSi1llbB3gdg5OUGkLOXCHX_MgS2QvR8eyG_JUmpz3&amp;s=10"
+         alt="">
+</div>
         {% endif %}
     </nav>
+    {% if formulario_datos %}
+    <section class="cuenta-datos" aria-labelledby="titulo-mis-datos">
+        <h2 id="titulo-mis-datos">Mis datos</h2>
+        <p>Nombre de usuario: <strong>{{ request.user.username }}</strong></p>
+
+        {% for mensaje in messages %}
+            <p role="status">{{ mensaje }}</p>
+        {% endfor %}
+
+        <form method="post" action="{% url 'usuarios:panel' %}">
+            {% csrf_token %}
+            {{ formulario_datos.as_p }}
+            <button class="boton" type="submit">Guardar cambios</button>
+        </form>
+    </section>
+{% endif %}
+{% if request.user.rol == 'ADMINISTRADOR' %}
+    <section class="buildcorp-grafico" aria-labelledby="titulo-inventario">
+        <h2 id="titulo-inventario">Unidades por estado</h2>
+
+        {% if total_unidades %}
+            <p>{{ total_unidades }} unidades registradas en el inventario</p>
+
+            <ul class="buildcorp-barras">
+                {% for estado, cantidad in estados %}
+                    <li>
+                        <div class="buildcorp-barra-etiqueta">
+                            <span>{{ estado }}</span>
+                            <strong>{{ cantidad }}</strong>
+                        </div>
+                        <div class="buildcorp-barra-pista" aria-hidden="true">
+                            <span class="buildcorp-barra-relleno"
+                                  style="width: {% widthratio cantidad total_unidades 100 %}%"></span>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Aún no hay unidades registradas en el inventario.</p>
+        {% endif %}
+    </section>
+{% endif %}
 
     {% if request.user.rol == 'ADMINISTRADOR' %}
-        <section class="panel-grafico">
-            <h2>Unidades por estado</h2>
-            {% if total_unidades %}
-                <ul>
-                    {% for estado, cantidad in estados %}
-                        <li>
-                            <span id="estado-{{ forloop.counter }}">{{ estado }}</span>
-                            <meter min="0"
-                                   max="{{ total_unidades|stringformat:'d' }}"
-                                   value="{{ cantidad|stringformat:'d' }}"
-                                   aria-labelledby="estado-{{ forloop.counter }}"></meter>
-                            <strong>{{ cantidad }}</strong>
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p>Registra una unidad física para ver su distribución por estado.</p>
-            {% endif %}
-        </section>
+<section class="buildcorp-grafico" aria-labelledby="titulo-inventario">
+    <h2 id="titulo-inventario">Unidades por estado</h2>
+    <p>{{ total_unidades }} unidades registradas en el inventario</p>
+
+    {% if total_unidades %}
+        <ul class="buildcorp-barras">
+            {% for estado, cantidad in estados %}
+                <li>
+                    <div class="buildcorp-barra-etiqueta">
+                        <span>{{ estado }}</span>
+                        <strong>{{ cantidad }}</strong>
+                    </div>
+
+                    <div class="buildcorp-barra-pista" aria-hidden="true">
+                        <span class="buildcorp-barra-relleno"
+                              style="width: {% widthratio cantidad total_unidades 100 %}%"></span>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Registra una unidad física para ver su distribución por estado.</p>
+    {% endif %}
+</section>
     {% endif %}
 </section>
 {% endblock %}

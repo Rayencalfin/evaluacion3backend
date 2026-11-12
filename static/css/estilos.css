@@ -463,3 +463,404 @@ body .navegacion a:hover {
         flex-wrap: wrap;
     }
 }
+.buildcorp-inicio .buildcorp-portada,
+.buildcorp-inicio .buildcorp-catalogo {
+    border-radius: 1.25rem;
+    color: #fff;
+}
+
+.buildcorp-inicio .buildcorp-portada {
+    display: flex;
+    align-items: center;
+    min-height: clamp(24rem, 55vw, 36rem);
+    padding: clamp(1.5rem, 6vw, 5rem);
+    background-color: #102a43;
+    background-image:
+        linear-gradient(90deg, #081d32f5 0%, #102a43cf 50%, #102a435c 100%),
+        url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRU94ku8zPTp1XE8Yf03b1rgT0iD5gqKo3G3AykM_LETQ&s=10");
+    background-position: center;
+    background-size: cover;
+}
+
+.buildcorp-portada-texto {
+    max-width: 42rem;
+}
+
+.buildcorp-inicio .buildcorp-portada h1 {
+    margin: 0 0 1rem;
+    color: inherit;
+    font-size: clamp(2.25rem, 5.5vw, 4.5rem);
+    font-weight: 800;
+    line-height: 1.05;
+}
+
+.buildcorp-portada h1 span {
+    color: #ffbe45;
+}
+
+.buildcorp-portada p {
+    max-width: 44ch;
+    margin-bottom: 0;
+    font-size: 1.125rem;
+}
+
+.buildcorp-inicio .card {
+    overflow: hidden;
+    border-color: #dce5ef;
+    border-radius: 1rem;
+}
+
+.buildcorp-inicio .buildcorp-foto {
+    display: block;
+    width: 100%;
+    height: 13rem;
+    object-fit: contain;
+    background: #edf3f8;
+}
+
+.buildcorp-inicio .buildcorp-foto-taller {
+    object-fit: cover;
+}
+
+.buildcorp-preguntas {
+    scroll-margin-top: 6rem;
+}
+
+.buildcorp-preguntas details {
+    margin-bottom: .75rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid #dce5ef;
+    border-radius: .75rem;
+    background: #f0f5fa;
+}
+
+.buildcorp-preguntas summary {
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.buildcorp-preguntas p {
+    margin: .75rem 0 0;
+}
+
+.buildcorp-inicio .buildcorp-catalogo {
+    padding: clamp(2.5rem, 7vw, 5rem) 1.25rem;
+    background: linear-gradient(135deg, #102a43, #075985);
+    text-align: center;
+}
+
+.buildcorp-inicio .buildcorp-catalogo h2 {
+    margin: 0 auto 1.25rem;
+    color: inherit;
+}
+
+.buildcorp-inicio .buildcorp-ayuda {
+    position: fixed;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 10;
+    border-radius: 999px;
+    box-shadow: 0 .25rem 1rem #102a4340;
+}
+.encabezado .marca-buildcorp img {
+    display: block;
+    width: clamp(8rem, 16vw, 11rem);
+    height: auto;
+}
+.buildcorp-admin .panel-cabecera {
+    background: linear-gradient(120deg, #1b242c, #145b78);
+    border-bottom: 5px solid #f6b51b;
+}
+
+.buildcorp-admin .panel-cifras > div {
+    background: #e7f5ee;
+    border: 1px solid #b9decb;
+    border-top: 4px solid #23734e;
+    color: #184c36;
+}
+
+.buildcorp-admin .panel-cifras > div:nth-child(2) {
+    background: #fff2d5;
+    border-color: #ebd39b;
+    border-top-color: #b46a09;
+    color: #754300;
+}
+
+.buildcorp-admin .panel-cifras > div:nth-child(3) {
+    background: #fbece6;
+    border-color: #edcbbd;
+    border-top-color: #b64b30;
+    color: #852f20;
+}
+
+.buildcorp-admin .panel-cifras dd {
+    color: inherit;
+}
+
+.buildcorp-admin .panel-accesos a {
+    background: #fffaf0;
+    border-color: #e8dfce;
+    border-left: 4px solid #f6b51b;
+}
+
+.buildcorp-admin .panel-accesos a:hover {
+    background: #fff0cf;
+    border-left-color: #b46a09;
+}
+
+.buildcorp-admin .buildcorp-grafico {
+    padding: clamp(1.25rem, 4vw, 2rem);
+    border: 1px solid #e8dfce;
+    border-radius: 1rem;
+    background: #fffdf8;
+    color: #1b242c;
+}
+
+.buildcorp-grafico h2 {
+    margin: 0 0 .35rem;
+}
+
+.buildcorp-grafico > p {
+    margin: 0;
+    color: #52616b;
+}
+
+.buildcorp-admin .buildcorp-barras {
+    display: grid;
+    gap: 1rem;
+    margin: 1.25rem 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.buildcorp-barra-etiqueta {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: .35rem;
+}
+
+.buildcorp-barra-pista {
+    height: .75rem;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #ece8df;
+}
+
+.buildcorp-barra-relleno {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: #23734e;
+}
+
+.buildcorp-barras li:nth-child(2) .buildcorp-barra-relleno {
+    background: #145b78;
+}
+
+.buildcorp-barras li:nth-child(3) .buildcorp-barra-relleno {
+    background: #c65524;
+}
+
+.buildcorp-barras li:nth-child(4) .buildcorp-barra-relleno {
+    background: #66737d;
+}
+.buildcorp-admin-area {
+    --admin-carbon: #1b242c;
+    --admin-azul: #145b78;
+    --admin-verde: #23734e;
+    --admin-ambar: #f6b51b;
+    --admin-terracota: #a6401b;
+    --admin-crema: #fffaf0;
+    --admin-borde: #e8dfce;
+}
+
+.buildcorp-admin-area :is(h1, h2, h3) {
+    color: var(--admin-carbon);
+}
+
+.buildcorp-admin-area .panel-cabecera h1 {
+    color: #fff;
+}
+
+.buildcorp-admin-area :is(.inventario-lista > li, .panel-accesos > a) {
+    background: var(--admin-crema);
+    border-color: var(--admin-borde);
+    border-left: 4px solid var(--admin-ambar);
+}
+
+.buildcorp-admin-area .panel-accesos > a:hover {
+    background: #fff0cf;
+}
+
+.buildcorp-admin-area :is(.boton, button[type="submit"]) {
+    background: var(--admin-azul);
+    border-color: var(--admin-azul);
+    color: #fff;
+}
+
+.buildcorp-admin-area :is(.boton, button[type="submit"]):hover {
+    background: #10475e;
+}
+
+.buildcorp-admin-area form[action*="/estado/aprobar/"] button {
+    background: var(--admin-verde);
+    border-color: var(--admin-verde);
+}
+
+.buildcorp-admin-area form[action*="/estado/rechazar/"] button {
+    background: var(--admin-terracota);
+    border-color: var(--admin-terracota);
+}
+
+.buildcorp-admin-area :is(input, select, textarea):focus-visible {
+    outline: 2px solid var(--admin-azul);
+    outline-offset: 2px;
+}
+
+.buildcorp-admin-area th {
+    background: var(--admin-carbon);
+    color: #fff;
+}
+
+.buildcorp-admin-area tbody tr:nth-child(even) {
+    background: var(--admin-crema);
+}
+
+.buildcorp-admin-area :is(th, td) {
+    border-color: var(--admin-borde);
+}
+.encabezado .navegacion {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .75rem;
+}
+
+.encabezado .navegacion form {
+    margin: 0;
+}
+
+.encabezado .navegacion > a,
+.encabezado .navegacion .boton-salir {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: .6rem 1rem;
+    border: 1px solid #7295ab;
+    border-radius: .65rem;
+    background: #24475d;
+    color: #fff;
+    font: inherit;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.encabezado .navegacion .boton-salir {
+    background: transparent;
+    border-color: #f6b51b;
+}
+
+.encabezado .navegacion > a:hover,
+.encabezado .navegacion .boton-salir:hover,
+.encabezado .navegacion > a:focus-visible,
+.encabezado .navegacion .boton-salir:focus-visible {
+    background: #f6b51b;
+    border-color: #f6b51b;
+    color: #1b242c;
+}
+
+.encabezado .navegacion > a:focus-visible,
+.encabezado .navegacion .boton-salir:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 3px;
+}
+.panel-accesos .cuenta-cliente {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, .85fr);
+    gap: 1.25rem;
+    width: 100%;
+}
+
+.panel-accesos .cuenta-cliente-accesos {
+    display: grid;
+    gap: .85rem;
+}
+
+.panel-accesos .cuenta-cliente-accesos a {
+    display: grid;
+    gap: .3rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid #e8dfce;
+    border-left: 5px solid #d78b13;
+    border-radius: .85rem;
+    background: #fff5df;
+    color: #1b242c;
+    text-decoration: none;
+}
+
+.panel-accesos .cuenta-cliente-accesos a:nth-child(2) {
+    background: #e7f5ee;
+    border-left-color: #23734e;
+}
+
+.panel-accesos .cuenta-cliente-accesos a:nth-child(3) {
+    background: #fbece6;
+    border-left-color: #a6401b;
+}
+
+.panel-accesos .cuenta-cliente-accesos a:hover {
+    box-shadow: 0 .35rem 1rem #1b242c26;
+}
+
+.panel-accesos .cuenta-cliente-accesos a:focus-visible {
+    outline: 2px solid #145b78;
+    outline-offset: 3px;
+}
+
+.panel-accesos .cuenta-cliente-imagen {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-height: 22rem;
+    min-height: 15rem;
+    object-fit: cover;
+    border-radius: 1rem;
+    background: #e8dfce;
+}
+
+@media (max-width: 700px) {
+    .panel-accesos .cuenta-cliente {
+        grid-template-columns: 1fr;
+    }
+
+    .panel-accesos .cuenta-cliente-imagen {
+        height: 12rem;
+        min-height: 0;
+    }
+}
+.cuenta-datos {
+    margin-top: 1.5rem;
+    padding: clamp(1rem, 4vw, 2rem);
+    border: 1px solid #e8dfce;
+    border-top: 4px solid #d78b13;
+    border-radius: 1rem;
+    background: #fffaf0;
+}
+
+.cuenta-datos form {
+    max-width: 34rem;
+}
+
+.cuenta-datos label {
+    display: block;
+    margin-bottom: .3rem;
+    font-weight: 700;
+}
+
+.cuenta-datos input {
+    width: 100%;
+}

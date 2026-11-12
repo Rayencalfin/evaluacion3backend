@@ -1,4 +1,4 @@
-# Rentis
+# BuildCorp
 
 Sistema web de arriendo y control de herramientas para el caso BuildCorp de la Evaluación 3 de Desarrollo Backend.
 
@@ -15,7 +15,7 @@ Sistema web de arriendo y control de herramientas para el caso BuildCorp de la E
    python -m pip install -r requirements.txt
    ```
 
-3. Para una instalación nueva, crea una base de datos en PostgreSQL y copia `.env.example` como `.env` junto a `manage.py`. Configura la conexión a PostgreSQL y la clave secreta de Django. Si ya tienes una instalación de Rentis, puedes conservar tu `.env` local. Mantén ese archivo fuera del repositorio.
+3. Para una instalación nueva, crea una base de datos en PostgreSQL y copia `.env.example` como `.env` junto a `manage.py`. Configura la conexión a PostgreSQL y la clave secreta de Django. Si ya tienes una instalación del proyecto, puedes conservar tu `.env` local. Mantén ese archivo fuera del repositorio.
 4. Aplica las migraciones, revisa la configuración e inicia el servidor:
 
    ```bash
@@ -24,12 +24,12 @@ Sistema web de arriendo y control de herramientas para el caso BuildCorp de la E
    python manage.py runserver
    ```
 
-5. Abre [Rentis](http://127.0.0.1:8000/). Puedes crear una cuenta de cliente desde **Iniciar sesión → Crear cuenta**. Para gestionar el inventario, inicia sesión con una cuenta de rol **Administrador** y abre **Mi panel**.
+5. Abre [BuildCorp](http://127.0.0.1:8000/). Puedes crear una cuenta de cliente desde **Iniciar sesión → Crear cuenta**. Para gestionar el inventario, inicia sesión con una cuenta de rol **Administrador** y abre **Mi panel**.
 
 ## Funcionalidades
 
 - **Cuentas y permisos.** Registro de clientes, inicio y cierre de sesión, y acceso según el rol de cliente, trabajador o administrador.
-- **Inventario.** Creación y edición de categorías, herramientas, ubicaciones y unidades físicas desde el panel de Rentis. Permite crear varias unidades desde una sola ficha, asignarles códigos únicos correlativos y buscarlas por nombre o código en un listado paginado.
+- **Inventario.** Creación y edición de categorías, herramientas, ubicaciones y unidades físicas desde el panel de BuildCorp. Permite crear varias unidades desde una sola ficha, asignarles códigos únicos correlativos y buscarlas por nombre o código en un listado paginado.
 - **Trazabilidad.** Historial de cambios manuales de estado y ubicación por unidad. Las unidades dadas de baja conservan su historial.
 - **Catálogo y carrito.** Catálogo público con búsqueda y filtro por categoría. El carrito se conserva al cerrar sesión y la disponibilidad se valida para las fechas seleccionadas al solicitar el arriendo.
 - **Solicitudes.** El personal puede aprobar o rechazar solicitudes. El cliente puede cancelar una solicitud propia antes de la entrega, según su estado.
